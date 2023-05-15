@@ -384,7 +384,7 @@ func set_changing_scene(p_is_changing_scene: bool) -> void:
 	# If we're changing scenes, interrupt any (other) running events and purge
 	# all event queues.
 	if _changing_scene:
-		interrupt([EVENT_INIT, EVENT_EXIT_SCENE, _change_scene.get_command_name()])
+		interrupt([EVENT_INIT, EVENT_EXIT_SCENE, EVENT_NEW_GAME, _change_scene.get_command_name()])
 
 
 ### This probably won't work sicne _current_channel could have changed after
