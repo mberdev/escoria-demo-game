@@ -254,7 +254,7 @@ func queue_event(event: ESCGrammarStmts.Event, force: bool = false) -> void:
 # - event: Event to run
 # - timeout: Number of seconds to wait before adding the event to the
 #   front queue
-func schedule_event(event: ESCEvent, timeout: float) -> void:
+func schedule_event(event, timeout: float) -> void:
 	scheduled_events.append(ESCScheduledEvent.new(event, timeout))
 
 

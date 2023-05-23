@@ -4,7 +4,7 @@ class_name ESCScheduledEvent
 
 
 # Event to run when timeout is reached
-var event: ESCEvent
+var event
 
 
 # The number of seconds until the event is run
@@ -12,7 +12,7 @@ var timeout: float
 
 
 # Create a new scheduled event
-func _init(p_event: ESCEvent, p_timeout: float):
+func _init(p_event, p_timeout: float):
 	self.event = p_event
 	self.timeout = p_timeout
 
