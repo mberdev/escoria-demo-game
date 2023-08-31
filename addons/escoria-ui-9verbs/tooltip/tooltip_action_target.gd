@@ -7,14 +7,14 @@ func update_tooltip_text():
 	bbcode_text += "[color=#" + color.to_html(false) + "]"
 	if !current_action.empty():
 		bbcode_text += current_action + "\t"
-	bbcode_text += current_target
+	bbcode_text += current_target.tooltip_name if current_target else ""
 
 	if waiting_for_target2 and current_target2.empty():
 		current_prep = prepositions.get(current_action, current_prep)
 		bbcode_text += "\t" + current_prep
 
-	if !current_target2.empty():
-		bbcode_text += "\t" + current_prep + "\t" + current_target2
+	if current_target2 and !current_target2.empty():
+		bbcode_text += "\t" + current_prep + "\t" + current_target2.tooltip_name
 
 	bbcode_text += "[/color]"
 	bbcode_text += "[/center]"

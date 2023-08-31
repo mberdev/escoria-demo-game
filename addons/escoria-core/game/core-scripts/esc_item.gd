@@ -149,6 +149,18 @@ export(NodePath) var animation_player_node: NodePath = "" \
 # as a camera target
 export(NodePath) var camera_node
 
+# Optional text to be displayed when mousing over item.
+export(String) var left_click_action_text = ""
+
+# Optional text to be displayed when mousing over item.
+export(String) var right_click_action_text = ""
+
+# Optional text to be displayed when mousing over inventoryitem.
+export(String) var left_click_inventory_action_text = ""
+
+# Optional text to be displayed when mousing over inventoryitem.
+export(String) var right_click_inventory_action_text = ""
+
 
 # ESCAnimationsResource (for walking, idling...)
 var animations: ESCAnimationResource setget set_animations

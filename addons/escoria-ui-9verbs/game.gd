@@ -115,19 +115,19 @@ func element_focused(element_id: String) -> void:
 			return
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_VERB_OR_ITEM:
-			tooltip.set_target(target_obj.tooltip_name)
+			tooltip.set_target(target_obj)
 
 			# Hovering an ESCItem highlights its default action
 			if escoria.action_manager.current_action != VERB_USE \
 					and target_obj is ESCItem:
 				verbs_menu.set_by_name(target_obj.default_action)
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_ITEM:
-			tooltip.set_target(target_obj.tooltip_name)
+			tooltip.set_target(target_obj)
 
 			verbs_menu.set_by_name(escoria.action_manager.current_action)
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target2(target_obj.tooltip_name)
+			tooltip.set_target2(target_obj)
 
 
 func element_unfocused() -> void:
@@ -141,11 +141,11 @@ func element_unfocused() -> void:
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_VERB_OR_ITEM, \
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_ITEM:
-			tooltip.set_target("")
+			tooltip.set_target(null)
 			verbs_menu.unselect_actions()
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target2("")
+			tooltip.set_target2(null)
 
 
 
@@ -172,12 +172,12 @@ func left_click_on_item(item_global_id: String, event: InputEvent) -> void:
 		# Just clicked on the item
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_VERB_OR_ITEM, \
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_ITEM:
-			tooltip.set_target(target_obj.tooltip_name)
+			tooltip.set_target(target_obj)
 
 		# Clicked on item and now we're awaiting a target item
 		# This means we clicked the tool and we now need a target
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target(target_obj.tooltip_name, true)
+			tooltip.set_target(target_obj, true)
 
 
 
@@ -233,7 +233,7 @@ func left_click_on_inventory_item(inventory_item_global_id: String, event: Input
 		# Clicked on inventory item and now we're awaiting a target item
 		# This means we clicked the tool and we now need a target
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target(target_obj.tooltip_name, true)
+			tooltip.set_target(target_obj, true)
 
 
 func right_click_on_inventory_item(inventory_item_global_id: String, event: InputEvent) -> void:
@@ -263,14 +263,14 @@ func inventory_item_focused(inventory_item_global_id: String) -> void:
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_VERB_OR_ITEM, \
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_ITEM:
-			tooltip.set_target(target_obj.tooltip_name)
+			tooltip.set_target(target_obj)
 
 			# Hovering an ESCItem highlights its default action
 			if escoria.action_manager.current_action != VERB_USE and target_obj is ESCItem:
 				verbs_menu.set_by_name(target_obj.default_action)
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target2(target_obj.tooltip_name)
+			tooltip.set_target2(target_obj)
 
 
 func inventory_item_unfocused() -> void:
@@ -283,10 +283,10 @@ func inventory_item_unfocused() -> void:
 
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_VERB_OR_ITEM, \
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_ITEM:
-			tooltip.set_target("")
+			tooltip.set_target(null)
 			verbs_menu.unselect_actions()
 		ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
-			tooltip.set_target2("")
+			tooltip.set_target2(null)
 
 
 func open_inventory():

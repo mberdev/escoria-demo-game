@@ -213,7 +213,7 @@ func left_double_click_on_bg(position: Vector2) -> void:
 
 func element_focused(element_id: String) -> void:
 	var target_obj = escoria.object_manager.get_object(element_id).node
-	$tooltip_layer/tooltip.set_target(target_obj)
+	$tooltip_layer/tooltip.set_target(target_obj.tooltip_name)
 
 	if escoria.action_manager.current_action != VERB_USE \
 			and escoria.action_manager.current_tool == null \
@@ -224,7 +224,7 @@ func element_focused(element_id: String) -> void:
 			)
 
 func element_unfocused() -> void:
-	$tooltip_layer/tooltip.set_target(null)
+	$tooltip_layer/tooltip.set_target("")
 
 
 ## ITEMS ##
@@ -290,12 +290,12 @@ func inventory_item_focused(inventory_item_global_id: String) -> void:
 	$tooltip_layer/tooltip.set_target(
 		escoria.object_manager.get_object(
 			inventory_item_global_id
-		)
+		).node.tooltip_name
 	)
 
 
 func inventory_item_unfocused() -> void:
-	$tooltip_layer/tooltip.set_target(null)
+	$tooltip_layer/tooltip.set_target("")
 
 
 func open_inventory():
@@ -399,7 +399,7 @@ func _on_action_finished():
 func _on_event_done(_return_code: int, _event_name: String):
 	if _return_code == ESCExecution.RC_OK:
 		escoria.action_manager.clear_current_action()
-		$tooltip_layer/tooltip.set_target(null)
+		$tooltip_layer/tooltip.set_target("")
 
 
 func _on_MenuButton_pressed() -> void:

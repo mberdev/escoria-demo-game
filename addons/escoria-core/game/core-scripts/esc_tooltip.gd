@@ -31,13 +31,13 @@ export(bool) var debug_mode = false setget set_debug_mode
 var current_action: String
 
 # Target item/hotspot
-var current_target: String setget set_target
+var current_target: ESCItem setget set_target
 
 # Preposition: on, with...
 var current_prep: String = "with"
 
 # Target 2 item/hotspot
-var current_target2: String
+var current_target2: ESCItem
 
 # True if tooltip is waiting for a click on second target (use x with y)
 var waiting_for_target2 = false
@@ -95,9 +95,9 @@ func set_debug_mode(p_debug_mode: bool):
 # Set the first target of the label.
 #
 # ## Parameters
-# - target: String the target to add to the label
+# - target: the item being targeted as part of the tooltip
 # - needs_second_target: if true, the label will prepare for a second target
-func set_target(target: String, needs_second_target: bool = false) -> void:
+func set_target(target: ESCItem, needs_second_target: bool = false) -> void:
 	current_target = target
 	waiting_for_target2 = needs_second_target
 	if _room_is_ready:
@@ -107,8 +107,8 @@ func set_target(target: String, needs_second_target: bool = false) -> void:
 # Set the second target of the label
 #
 # ## Parameters
-# - target2: String the second target to add to the label
-func set_target2(target2: String) -> void:
+# - target2: the second item to be targeted as part of the tooltip if/when necessary
+func set_target2(target2: ESCItem) -> void:
 	current_target2 = target2
 	if _room_is_ready:
 		update_tooltip_text()
@@ -127,7 +127,7 @@ func update_size():
 	if not get_tree():
 		# We're not in the tree anymore. Return
 		return
-	rect_size = get_font("normal_font").get_string_size(current_target)
+	rect_size = get_font("normal_font").get_string_size(current_target.tooltip_name)
 
 
 # Calculate the offset of the label depending on its position.
@@ -194,8 +194,8 @@ func tooltip_distance_to_edge_right(position: Vector2):
 # Clear the tooltip targets texts
 func clear():
 	waiting_for_target2 = false
-	set_target("")
-	set_target2("")
+	set_target(null)
+	set_target2(null)
 
 
 # Called when the room is loaded to setup the label.
