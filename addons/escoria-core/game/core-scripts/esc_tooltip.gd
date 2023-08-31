@@ -124,7 +124,7 @@ func update_tooltip_text():
 
 # Update the tooltip size according to the text.
 func update_size():
-	if not get_tree():
+	if not get_tree() or not current_target:
 		# We're not in the tree anymore. Return
 		return
 	rect_size = get_font("normal_font").get_string_size(current_target.tooltip_name)
