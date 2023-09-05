@@ -18,7 +18,7 @@ func update_tooltip_text():
 
 	bbcode_text = "[center]"
 	bbcode_text += "[color=#" + color.to_html(false) + "]"
-	bbcode_text += current_target
+	bbcode_text += current_target.tooltip_name if current_target else ""
 	bbcode_text += "[/color]"
 	bbcode_text += "[/center]"
 #	push_align(RichTextLabel.ALIGN_CENTER)

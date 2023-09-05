@@ -149,6 +149,9 @@ export(NodePath) var animation_player_node: NodePath = "" \
 # as a camera target
 export(NodePath) var camera_node
 
+# Option to draw outline around item.
+export(bool) var draw_outline = false
+
 # Optional text to be displayed when mousing over item.
 export(String) var left_click_action_text = ""
 
@@ -190,6 +193,8 @@ var _force_registration: bool = false
 # Warnings for scene.
 var _scene_warnings: PoolStringArray = []
 
+# Optional outline for item.
+var _outline: ESCItemOutline
 
 # Add the movable node, connect signals, detect child nodes
 # and register this item
@@ -209,6 +214,8 @@ func _ready():
 		connect("input_event", self, "_on_input_event")
 	if not self.is_connected("mouse_exited", self, "_on_mouse_exited"):
 		connect("mouse_exited", self, "_on_mouse_exited")
+
+	_create_outline()
 
 	# Register and connect all elements to Escoria backoffice.
 	if not Engine.is_editor_hint():
@@ -325,12 +332,40 @@ func validate_exported_parameters() -> void:
 				)
 
 
+# Creates an outline for the item if specified
+# TODO: Consider moving this into own class for purposes of composition.
+func _create_outline() -> void:
+	if draw_outline and collision is CollisionPolygon2D:
+		_outline = ESCItemOutline.new()
+		_outline.polygon = collision.get("polygon")
+		_outline.color = Color(1,1,1,0.2)
+		_outline.set_outline_width(2.0)
+		_outline.set_outline_color(Color(1,1,1,1))
+		##outline.offset = Vector2(1,1)
+		collision.add_child(_outline)
+		_outline.hide()
+
+
 # Mouse exited happens on any item that mouse cursor exited, even those UNDER
 # the top level of overlapping stack.
 func _on_mouse_exited():
 	if escoria.inputs_manager.hover_stack.has(self):
 		escoria.inputs_manager.hover_stack.erase_item(self)
 	escoria.inputs_manager.unset_hovered_node(self)
+
+
+func _toggle_highlight(value: bool) -> void:
+	if not is_interactive:
+		return
+
+	if value and not _outline.visible:
+		_outline.show()
+	elif not value and _outline.visible:
+		_outline.hide()
+
+
+func highlight(value: bool) -> void:
+	_toggle_highlight(value)
 
 
 class HoverStackSorter:
