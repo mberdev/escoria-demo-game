@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://addons/escoria-ui-simplemouse/inventory/inventory_ui.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/escoria-ui-rtmi/inventory/inventory_ui.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/escoria-core/game/scenes/dialogs/esc_dialog_player.gd" type="Script" id=2]
 [ext_resource path="res://addons/escoria-core/game/scenes/camera_player/camera.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/escoria-ui-simplemouse/verbs_mouseicons.tscn" type="PackedScene" id=4]
-[ext_resource path="res://addons/escoria-ui-simplemouse/game.gd" type="Script" id=5]
-[ext_resource path="res://addons/escoria-ui-simplemouse/tooltip/target_tooltip.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/escoria-ui-rtmi/verbs_mouseicons.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/escoria-ui-rtmi/game.gd" type="Script" id=5]
+[ext_resource path="res://addons/escoria-ui-rtmi/tooltip/target_tooltip.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/escoria-core/ui_library/menus/main_menu/main_menu.tscn" type="PackedScene" id=7]
 [ext_resource path="res://addons/escoria-core/ui_library/menus/pause_menu/pause_menu.tscn" type="PackedScene" id=8]
-[ext_resource path="res://addons/escoria-ui-simplemouse/theme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/escoria-ui-rtmi/theme.tres" type="Theme" id=9]
 
 [node name="game" type="Node2D"]
 script = ExtResource( 5 )

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/escoria-ui-simplemouse/tooltip/tooltip_target.gd" type="Script" id=2]
+[ext_resource path="res://addons/escoria-ui-rtmi/tooltip/tooltip_target.gd" type="Script" id=2]
 
 [node name="tooltip" type="RichTextLabel"]
 bbcode_enabled = true

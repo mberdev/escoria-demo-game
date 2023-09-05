@@ -70,6 +70,9 @@ var _is_gamepad_connected = false
 # Tracks the mouse's current position onscreen.
 var _current_mouse_pos = Vector2.ZERO
 
+# The currently0focused target object.
+var _current_target
+
 
 func _ready():
 	$tooltip_layer/tooltip.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
@@ -196,8 +199,10 @@ func left_click_on_bg(position: Vector2) -> void:
 		$mouse_layer/verbs_menu.set_by_name(VERB_WALK)
 		$mouse_layer/verbs_menu.clear_tool_texture()
 
+
 func right_click_on_bg(position: Vector2) -> void:
 	mousewheel_action(1)
+
 
 func left_double_click_on_bg(position: Vector2) -> void:
 	if escoria.main.current_scene.player:
@@ -209,11 +214,16 @@ func left_double_click_on_bg(position: Vector2) -> void:
 		$mouse_layer/verbs_menu.set_by_name(VERB_WALK)
 		$mouse_layer/verbs_menu.clear_tool_texture()
 
+
 ## ITEM/HOTSPOT FOCUS ##
 
 func element_focused(element_id: String) -> void:
 	var target_obj = escoria.object_manager.get_object(element_id).node
 	$tooltip_layer/tooltip.set_target(target_obj.tooltip_name)
+
+	_highlight_item(target_obj)
+
+	_current_target = target_obj
 
 	if escoria.action_manager.current_action != VERB_USE \
 			and escoria.action_manager.current_tool == null \
@@ -223,7 +233,9 @@ func element_focused(element_id: String) -> void:
 				target_obj.default_action
 			)
 
+
 func element_unfocused() -> void:
+	_clear_current_item_highlight()
 	$tooltip_layer/tooltip.set_target("")
 
 
@@ -247,8 +259,10 @@ func left_click_on_item(item_global_id: String, event: InputEvent) -> void:
 
 	$mouse_layer/verbs_menu.clear_tool_texture()
 
+
 func right_click_on_item(item_global_id: String, event: InputEvent) -> void:
 	mousewheel_action(1)
+
 
 func left_double_click_on_item(item_global_id: String, event: InputEvent) -> void:
 	escoria.action_manager.do(
@@ -360,7 +374,7 @@ func apply_custom_settings(custom_settings: Dictionary):
 
 func get_custom_data() -> Dictionary:
 	return {
-		"ui_type": "simplemouse"
+		"ui_type": "rtmi"
 	}
 
 
@@ -404,3 +418,14 @@ func _on_event_done(_return_code: int, _event_name: String):
 
 func _on_MenuButton_pressed() -> void:
 	pause_game()
+
+
+func _highlight_item(item: ESCItem) -> void:
+	_clear_current_item_highlight()
+
+	item.highlight(true)
+
+
+func _clear_current_item_highlight() -> void:
+	if is_instance_valid(_current_target):
+		_current_target.highlight(false)

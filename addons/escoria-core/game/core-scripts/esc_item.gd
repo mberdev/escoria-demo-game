@@ -334,6 +334,7 @@ func validate_exported_parameters() -> void:
 
 # Creates an outline for the item if specified
 # TODO: Consider moving this into own class for purposes of composition.
+# TODO: Make the outline parameters configurable.
 func _create_outline() -> void:
 	if draw_outline and collision is CollisionPolygon2D:
 		_outline = ESCItemOutline.new()
@@ -355,7 +356,7 @@ func _on_mouse_exited():
 
 
 func _toggle_highlight(value: bool) -> void:
-	if not is_interactive:
+	if not is_interactive or not is_instance_valid(_outline):
 		return
 
 	if value and not _outline.visible:
