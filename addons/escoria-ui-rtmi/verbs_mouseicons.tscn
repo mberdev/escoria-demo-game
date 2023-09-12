@@ -11,9 +11,6 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="actions" type="HBoxContainer" parent="."]
 visible = false
@@ -86,6 +83,3 @@ margin_top = 45.6984
 margin_right = 86.4475
 margin_bottom = 85.6984
 mouse_filter = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}

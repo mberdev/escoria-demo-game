@@ -127,7 +127,8 @@ func update_size():
 	if not get_tree() or not current_target:
 		# We're not in the tree anymore. Return
 		return
-	rect_size = get_font("normal_font").get_string_size(current_target.tooltip_name)
+
+	rect_size = get_font("normal_font").get_string_size(current_target.get_primary_action_text())
 
 
 # Calculate the offset of the label depending on its position.

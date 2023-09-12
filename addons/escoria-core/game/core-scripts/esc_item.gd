@@ -153,10 +153,10 @@ export(NodePath) var camera_node
 export(bool) var draw_outline = false
 
 # Optional text to be displayed when mousing over item.
-export(String) var left_click_action_text = ""
+export(String) var primary_action_text = ""
 
 # Optional text to be displayed when mousing over item.
-export(String) var right_click_action_text = ""
+export(String) var secondary_action_text = ""
 
 # Optional text to be displayed when mousing over inventoryitem.
 export(String) var left_click_inventory_action_text = ""
@@ -945,3 +945,19 @@ func _get_identifier_as_key_value() -> String:
 # Returns true if the player is currently moving, false otherwise
 func is_moving() -> bool:
 	return _movable.task != ESCMovable.MovableTask.NONE if is_movable else false
+
+
+# Determines what the text should be for the primary action on this item.
+#
+# *Returns*
+# Returns the text to be used for the primary action on this iitem.
+func get_primary_action_text() -> String:
+	return primary_action_text if primary_action_text else tooltip_name if tooltip_name else ""
+
+
+# Determines what the text should be for the secondary action on this item.
+#
+# *Returns*
+# Returns the text to be used for the secondary action on this iitem.
+func get_secondary_action_text(item: ESCItem) -> String:
+	return secondary_action_text if secondary_action_text else tooltip_name if tooltip_name else ""

@@ -73,9 +73,18 @@ var _current_mouse_pos = Vector2.ZERO
 # The currently0focused target object.
 var _current_target
 
+# A reference to the node handling tooltip2
+var tooltip2_node: Object
+
+
+onready var tooltip_lmb = $tooltip_layer/tooltip_lmb/tooltip
+onready var tooltip_rmb = $tooltip_layer/tooltip_rmb/tooltip
+
+
 
 func _ready():
-	$tooltip_layer/tooltip.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
+	tooltip_lmb.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
+	tooltip_rmb.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
 
 
 func _enter_tree():
@@ -218,8 +227,10 @@ func left_double_click_on_bg(position: Vector2) -> void:
 ## ITEM/HOTSPOT FOCUS ##
 
 func element_focused(element_id: String) -> void:
+	# target_obj should be an ESCItem
 	var target_obj = escoria.object_manager.get_object(element_id).node
-	$tooltip_layer/tooltip.set_target(target_obj.tooltip_name)
+
+	tooltip_lmb.set_target(target_obj)
 
 	_highlight_item(target_obj)
 
@@ -236,7 +247,7 @@ func element_focused(element_id: String) -> void:
 
 func element_unfocused() -> void:
 	_clear_current_item_highlight()
-	$tooltip_layer/tooltip.set_target("")
+	tooltip_lmb.set_target(null)
 
 
 ## ITEMS ##
@@ -301,15 +312,15 @@ func left_double_click_on_inventory_item(inventory_item_global_id: String, event
 
 
 func inventory_item_focused(inventory_item_global_id: String) -> void:
-	$tooltip_layer/tooltip.set_target(
+	tooltip_lmb.set_target(
 		escoria.object_manager.get_object(
 			inventory_item_global_id
-		).node.tooltip_name
+		).node
 	)
 
 
 func inventory_item_unfocused() -> void:
-	$tooltip_layer/tooltip.set_target("")
+	tooltip_lmb.set_target(null)
 
 
 func open_inventory():
@@ -413,7 +424,7 @@ func _on_action_finished():
 func _on_event_done(_return_code: int, _event_name: String):
 	if _return_code == ESCExecution.RC_OK:
 		escoria.action_manager.clear_current_action()
-		$tooltip_layer/tooltip.set_target("")
+		tooltip_lmb.set_target(null)
 
 
 func _on_MenuButton_pressed() -> void:

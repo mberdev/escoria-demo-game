@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/escoria-ui-rtmi/inventory/inventory_ui.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/escoria-core/game/scenes/dialogs/esc_dialog_player.gd" type="Script" id=2]
@@ -9,6 +9,8 @@
 [ext_resource path="res://addons/escoria-core/ui_library/menus/main_menu/main_menu.tscn" type="PackedScene" id=7]
 [ext_resource path="res://addons/escoria-core/ui_library/menus/pause_menu/pause_menu.tscn" type="PackedScene" id=8]
 [ext_resource path="res://addons/escoria-ui-rtmi/theme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/escoria-ui-rtmi/cursors/rounded_mouse_right.png" type="Texture" id=10]
+[ext_resource path="res://addons/escoria-ui-rtmi/cursors/rounded_mouse_left.png" type="Texture" id=11]
 
 [node name="game" type="Node2D"]
 script = ExtResource( 5 )
@@ -85,7 +87,37 @@ visible = false
 [node name="tooltip_layer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="tooltip" parent="tooltip_layer" instance=ExtResource( 6 )]
+[node name="tooltip_lmb" type="HBoxContainer" parent="tooltip_layer"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_lmb"]
+margin_right = 24.0
+margin_bottom = 40.0
+texture = ExtResource( 11 )
+
+[node name="tooltip" parent="tooltip_layer/tooltip_lmb" instance=ExtResource( 6 )]
+margin_left = 28.0
+margin_right = 28.0
+margin_bottom = 40.0
+mouse_filter = 2
+theme = ExtResource( 9 )
+bbcode_text = "[center][color=#000000][/color][/center]"
+fit_content_height = true
+
+[node name="tooltip_rmb" type="HBoxContainer" parent="tooltip_layer"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_rmb"]
+margin_right = 24.0
+margin_bottom = 40.0
+texture = ExtResource( 10 )
+
+[node name="tooltip" parent="tooltip_layer/tooltip_rmb" instance=ExtResource( 6 )]
+margin_left = 28.0
+margin_right = 28.0
+margin_bottom = 40.0
 mouse_filter = 2
 theme = ExtResource( 9 )
 bbcode_text = "[center][color=#000000][/color][/center]"
