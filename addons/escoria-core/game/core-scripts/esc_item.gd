@@ -152,17 +152,11 @@ export(NodePath) var camera_node
 # Option to draw outline around item.
 export(bool) var draw_outline = false
 
-# Optional text to be displayed when mousing over item.
-export(String) var primary_action_text = ""
+# Optional per-action text to be displayed when mousing over item.
+export(Dictionary) var action_texts = {}
 
-# Optional text to be displayed when mousing over item.
-export(String) var secondary_action_text = ""
-
-# Optional text to be displayed when mousing over inventoryitem.
-export(String) var left_click_inventory_action_text = ""
-
-# Optional text to be displayed when mousing over inventoryitem.
-export(String) var right_click_inventory_action_text = ""
+# Optional per-action text to be displayed when mousing over inventory item.
+export(String) var inventory_action_texts = {}
 
 
 # ESCAnimationsResource (for walking, idling...)
@@ -947,17 +941,25 @@ func is_moving() -> bool:
 	return _movable.task != ESCMovable.MovableTask.NONE if is_movable else false
 
 
-# Determines what the text should be for the primary action on this item.
+# Determines what the text should be for the specified action on this item.
+#
+# #### Parameters
+#
+# - action: The action name to use to lookup its associated text.
 #
 # *Returns*
-# Returns the text to be used for the primary action on this iitem.
-func get_primary_action_text() -> String:
-	return primary_action_text if primary_action_text else tooltip_name if tooltip_name else ""
+# Returns the text to be used for the specified action on this iitem.
+func get_action_text(action: String) -> String:
+	return action_texts[action] if action in action_texts.keys() else tooltip_name if tooltip_name else ""
 
 
-# Determines what the text should be for the secondary action on this item.
+# Determines what the text should be for the specified inventory action on this item.
+#
+# #### Parameters
+#
+# - action: The inventory action name to use to lookup its associated text.
 #
 # *Returns*
-# Returns the text to be used for the secondary action on this iitem.
-func get_secondary_action_text(item: ESCItem) -> String:
-	return secondary_action_text if secondary_action_text else tooltip_name if tooltip_name else ""
+# Returns the text to be used for the specified inventory action on this iitem.
+func get_inventory_action_text(action: String) -> String:
+	return inventory_action_texts[action] if action in inventory_action_texts.keys() else tooltip_name if tooltip_name else ""

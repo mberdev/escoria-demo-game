@@ -67,6 +67,7 @@ bbcode_text = "[center]Test[/center]"
 text = "Test"
 fit_content_height = true
 color = Color( 1, 1, 1, 1 )
+tooltip_id = "static-tooltip"
 
 [node name="HSeparator" type="HSeparator" parent="ui/Control/panel_down/VBoxContainer"]
 margin_top = 36.0

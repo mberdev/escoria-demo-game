@@ -2,7 +2,7 @@ extends ESCTooltip
 
 export var prepositions = {"use": "with", "give": "to"}
 
-func update_tooltip_text():
+func set_content():
 	bbcode_text = "[center]"
 	bbcode_text += "[color=#" + color.to_html(false) + "]"
 	if !current_action.empty():

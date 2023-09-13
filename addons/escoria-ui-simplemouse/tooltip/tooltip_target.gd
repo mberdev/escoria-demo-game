@@ -4,7 +4,7 @@ extends ESCTooltip
 signal tooltip_size_updated
 
 
-func update_tooltip_text():
+func set_content():
 	# Need to update size of bbcode rect before updating the text itself otherwise on the
 	# first frame the text is wider than the default of 0 and ends up being really tall
 	# and setting the wrong vertical margin for the tooltip

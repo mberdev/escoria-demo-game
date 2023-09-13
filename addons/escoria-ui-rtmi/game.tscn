@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/escoria-ui-rtmi/inventory/inventory_ui.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/escoria-core/game/scenes/dialogs/esc_dialog_player.gd" type="Script" id=2]
 [ext_resource path="res://addons/escoria-core/game/scenes/camera_player/camera.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/escoria-ui-rtmi/verbs_mouseicons.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/escoria-ui-rtmi/game.gd" type="Script" id=5]
 [ext_resource path="res://addons/escoria-ui-rtmi/tooltip/target_tooltip.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/escoria-core/ui_library/menus/main_menu/main_menu.tscn" type="PackedScene" id=7]
@@ -87,55 +86,44 @@ visible = false
 [node name="tooltip_layer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="tooltip_lmb" type="HBoxContainer" parent="tooltip_layer"]
+[node name="tooltip_lmb_container" type="Control" parent="tooltip_layer"]
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_lmb"]
+[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_lmb_container"]
 margin_right = 24.0
 margin_bottom = 40.0
 texture = ExtResource( 11 )
 
-[node name="tooltip" parent="tooltip_layer/tooltip_lmb" instance=ExtResource( 6 )]
+[node name="tooltip" parent="tooltip_layer/tooltip_lmb_container" instance=ExtResource( 6 )]
 margin_left = 28.0
 margin_right = 28.0
-margin_bottom = 40.0
+margin_bottom = 79.0
 mouse_filter = 2
 theme = ExtResource( 9 )
 bbcode_text = "[center][color=#000000][/color][/center]"
 fit_content_height = true
+offset_from_cursor = Vector2( 0, 75 )
+tooltip_id = "primary-action-tooltip"
 
-[node name="tooltip_rmb" type="HBoxContainer" parent="tooltip_layer"]
+[node name="tooltip_rmb_container" type="Control" parent="tooltip_layer"]
 margin_right = 40.0
 margin_bottom = 40.0
 
-[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_rmb"]
+[node name="icon" type="TextureRect" parent="tooltip_layer/tooltip_rmb_container"]
 margin_right = 24.0
 margin_bottom = 40.0
 texture = ExtResource( 10 )
 
-[node name="tooltip" parent="tooltip_layer/tooltip_rmb" instance=ExtResource( 6 )]
+[node name="tooltip" parent="tooltip_layer/tooltip_rmb_container" instance=ExtResource( 6 )]
 margin_left = 28.0
 margin_right = 28.0
-margin_bottom = 40.0
+margin_bottom = 83.0
 mouse_filter = 2
 theme = ExtResource( 9 )
 bbcode_text = "[center][color=#000000][/color][/center]"
 fit_content_height = true
-
-[node name="mouse_layer" type="CanvasLayer" parent="."]
-layer = 2
-
-[node name="verbs_menu" parent="mouse_layer" instance=ExtResource( 4 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 156.0
-margin_top = 810.0
-margin_right = 156.0
-margin_bottom = 900.0
-grow_horizontal = 0
-size_flags_horizontal = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
+offset_from_cursor = Vector2( 0, -50 )
+tooltip_id = "secondary-action-tooltip"
 
 [connection signal="pressed" from="CanvasLayer/ui/HBoxContainer/VBoxContainer/MenuButton" to="." method="_on_MenuButton_pressed"]

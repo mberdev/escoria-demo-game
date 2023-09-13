@@ -38,8 +38,8 @@ export(EDITOR_GAME_DEBUG_DISPLAY) var editor_debug_mode = \
 # This should be a Control node and NOT a CanvasLayer (or any other type of) node.
 export(NodePath) var ui_parent_control_node
 
-# A reference to the node handling tooltips
-var tooltip_node: Object
+# Dictionary containing any and all tooltip nodes used by the game.
+var tooltips: Dictionary = {}
 
 # Boolean indicating whether the game scene is ready to accept inputs
 # from the player. This enables using escoria.is_ready_for_inputs() in _input()
@@ -122,10 +122,40 @@ func _draw():
 		draw_rect(mouse_limits, ColorN("red"), false, 10.0)
 
 
-# Clears the tooltip content (if an ESCTooltip node exists in UI)
-func clear_tooltip():
-	if tooltip_node != null:
-		(tooltip_node as ESCTooltip).clear()
+# Registers a tooltip with the game. If the same tooltip is to be registered
+# with the same key, we skip the registration.
+#
+# #### Parameters
+#
+# - tooltip_key: The key used to register the tooltip.
+# - tooltip: The actual tooltip to be registered.
+func register_tooltip(tooltip_key: String, tooltip: ESCTooltip) -> void:
+	if tooltip_key in tooltips.keys():
+		if tooltips[tooltip_key] != tooltip:
+			escoria.logger.error(
+				self,
+				"Different tooltip with id '%s' already exists." % tooltip_key
+			)
+
+		return
+
+	tooltips[tooltip_key] = tooltip
+
+
+# Clears all tooltips' content (if an ESCTooltip node exists in UI)
+func clear_tooltips():
+	for key in tooltips.keys():
+		(tooltips[key] as ESCTooltip).clear()
+
+
+# Clears specified tooltip's content.
+#
+# #### Parameters
+#
+# - tooltip_key: ID of tooltip whose content is to be cleared.
+func clear_tooltip(tooltip_key: String) -> void:
+	if tooltip_key in tooltips.keys():
+		(tooltips[tooltip_key] as ESCTooltip).clear()
 
 
 # Sets up and performs default walking action

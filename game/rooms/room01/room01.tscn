@@ -88,6 +88,8 @@ tooltip_name = "Exit to room 2"
 default_action = "walk"
 combine_when_selected_action_is_in = [  ]
 dialog_color = Color( 1, 1, 1, 1 )
+inventory_action_texts = {
+}
 animations = null
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hotspots/r_door"]
@@ -107,6 +109,12 @@ default_action = "look"
 combine_when_selected_action_is_in = [  ]
 inventory_texture = ExtResource( 10 )
 dialog_color = Color( 1, 1, 1, 1 )
+action_texts = {
+"look": "What exactly is this?",
+"use": "I'm gonna try to use this art."
+}
+inventory_action_texts = {
+}
 animations = null
 
 [node name="Art1" type="Sprite" parent="Hotspots/artwork1"]
@@ -144,6 +152,8 @@ default_action = "look"
 combine_when_selected_action_is_in = [  ]
 inventory_texture = ExtResource( 9 )
 dialog_color = Color( 1, 1, 1, 1 )
+inventory_action_texts = {
+}
 animations = null
 
 [node name="Art12" type="Sprite" parent="Hotspots/artwork2"]
@@ -180,6 +190,8 @@ is_trigger = true
 player_orients_on_arrival = false
 combine_when_selected_action_is_in = [  ]
 dialog_color = Color( 1, 1, 1, 1 )
+inventory_action_texts = {
+}
 animations = null
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hotspots/trigger_talk"]

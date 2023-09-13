@@ -9,6 +9,3 @@ bbcode_enabled = true
 bbcode_text = "[center][/center]"
 scroll_active = false
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}

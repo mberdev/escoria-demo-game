@@ -71,8 +71,11 @@ var _is_gamepad_connected = false
 var _current_mouse_pos = Vector2.ZERO
 
 
+onready var tooltip: ESCTooltip = $tooltip_layer/tooltip
+
+
 func _ready():
-	$tooltip_layer/tooltip.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
+	tooltip.connect("tooltip_size_updated", self, "update_tooltip_following_mouse_position")
 
 
 func _enter_tree():
@@ -213,7 +216,7 @@ func left_double_click_on_bg(position: Vector2) -> void:
 
 func element_focused(element_id: String) -> void:
 	var target_obj = escoria.object_manager.get_object(element_id).node
-	$tooltip_layer/tooltip.set_target(target_obj)
+	tooltip.set_target(target_obj)
 
 	if escoria.action_manager.current_action != VERB_USE \
 			and escoria.action_manager.current_tool == null \
@@ -224,7 +227,7 @@ func element_focused(element_id: String) -> void:
 			)
 
 func element_unfocused() -> void:
-	$tooltip_layer/tooltip.set_target(null)
+	tooltip.set_target(null)
 
 
 ## ITEMS ##
@@ -287,7 +290,7 @@ func left_double_click_on_inventory_item(inventory_item_global_id: String, event
 
 
 func inventory_item_focused(inventory_item_global_id: String) -> void:
-	$tooltip_layer/tooltip.set_target(
+	tooltip.set_target(
 		escoria.object_manager.get_object(
 			inventory_item_global_id
 		)
@@ -295,7 +298,7 @@ func inventory_item_focused(inventory_item_global_id: String) -> void:
 
 
 func inventory_item_unfocused() -> void:
-	$tooltip_layer/tooltip.set_target(null)
+	tooltip.set_target(null)
 
 
 func open_inventory():
@@ -368,27 +371,27 @@ func get_custom_data() -> Dictionary:
 func update_tooltip_following_mouse_position():
 	var corrected_position = _current_mouse_pos \
 		- Vector2(
-			tooltip_node.rect_size.x / 2,
-			tooltip_node.rect_size.y / 2
+			tooltip.rect_size.x / 2,
+			tooltip.rect_size.y / 2
 		)
 
 	# clamp TOP
-	if tooltip_node.tooltip_distance_to_edge_top(_current_mouse_pos) <= mouse_tooltip_margin:
+	if tooltip.tooltip_distance_to_edge_top(_current_mouse_pos) <= mouse_tooltip_margin:
 		corrected_position.y = mouse_tooltip_margin
 
 	# clamp BOTTOM
-	if tooltip_node.tooltip_distance_to_edge_bottom(_current_mouse_pos + tooltip_node.rect_size) <= mouse_tooltip_margin:
-		corrected_position.y = escoria.game_size.y - mouse_tooltip_margin - tooltip_node.rect_size.y
+	if tooltip.tooltip_distance_to_edge_bottom(_current_mouse_pos + tooltip.rect_size) <= mouse_tooltip_margin:
+		corrected_position.y = escoria.game_size.y - mouse_tooltip_margin - tooltip.rect_size.y
 
 	# clamp LEFT
-	if tooltip_node.tooltip_distance_to_edge_left(_current_mouse_pos - tooltip_node.rect_size/2) <= mouse_tooltip_margin:
+	if tooltip.tooltip_distance_to_edge_left(_current_mouse_pos - tooltip.rect_size/2) <= mouse_tooltip_margin:
 		corrected_position.x = mouse_tooltip_margin
 
 	# clamp RIGHT
-	if tooltip_node.tooltip_distance_to_edge_right(_current_mouse_pos + tooltip_node.rect_size/2) <= mouse_tooltip_margin:
-		corrected_position.x = escoria.game_size.x - mouse_tooltip_margin - tooltip_node.rect_size.x
+	if tooltip.tooltip_distance_to_edge_right(_current_mouse_pos + tooltip.rect_size/2) <= mouse_tooltip_margin:
+		corrected_position.x = escoria.game_size.x - mouse_tooltip_margin - tooltip.rect_size.x
 
-	tooltip_node.rect_position = corrected_position + tooltip_node.offset_from_cursor
+	tooltip.rect_position = corrected_position + tooltip.offset_from_cursor
 
 
 func _on_action_finished():
@@ -399,7 +402,7 @@ func _on_action_finished():
 func _on_event_done(_return_code: int, _event_name: String):
 	if _return_code == ESCExecution.RC_OK:
 		escoria.action_manager.clear_current_action()
-		$tooltip_layer/tooltip.set_target(null)
+		tooltip.set_target(null)
 
 
 func _on_MenuButton_pressed() -> void:

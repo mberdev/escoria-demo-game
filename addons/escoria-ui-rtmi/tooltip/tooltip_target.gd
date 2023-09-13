@@ -4,7 +4,7 @@ extends ESCTooltip
 signal tooltip_size_updated
 
 
-func update_tooltip_text():
+func set_content():
 	# Need to update size of bbcode rect before updating the text itself otherwise on the
 	# first frame the text is wider than the default of 0 and ends up being really tall
 	# and setting the wrong vertical margin for the tooltip
@@ -17,8 +17,8 @@ func update_tooltip_text():
 	emit_signal("tooltip_size_updated")
 
 	bbcode_text = "[center]"
-	bbcode_text += "[color=#" + color.to_html(false) + "]"
-	bbcode_text += current_target.tooltip_name if current_target else ""
+	bbcode_text += "[color=#" + color.to_html(false) + "]"	
+	bbcode_text += current_target.get_action_text(current_action) if current_target else ""
 	bbcode_text += "[/color]"
 	bbcode_text += "[/center]"
 #	push_align(RichTextLabel.ALIGN_CENTER)

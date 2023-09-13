@@ -21,10 +21,13 @@ const ONE_LINE_HEIGHT = 16
 export(Color) var color setget set_color
 
 # Vector2 defining the offset from the cursor
-export(Vector2) var offset_from_cursor = Vector2(10,0)
+export(Vector2) var offset_from_cursor = Vector2(10, 0)
 
 # Activates debug mode. If enabled, shows the label with a white background.
 export(bool) var debug_mode = false setget set_debug_mode
+
+# Unique identifier for this tooltip. Used when registering tooltip with game.
+export(String) var tooltip_id setget set_tooltip_id
 
 
 # Infinitive verb
@@ -62,8 +65,7 @@ func _ready():
 func set_color(p_color: Color):
 	color = p_color
 	if _room_is_ready:
-		update_tooltip_text()
-
+		set_content()
 
 # Enable/disable debug mode of the label. If enabled, the label is displayed
 # with a white background.
@@ -92,6 +94,15 @@ func set_debug_mode(p_debug_mode: bool):
 			debug_texturerect_node.queue_free()
 
 
+# Sets the ID for this tooltip. Must be unique.
+#
+# #### Parameters
+#
+# - id: unique string to be used as this tooltip's ID.
+func set_tooltip_id(id: String) -> void:
+	tooltip_id = id
+
+
 # Set the first target of the label.
 #
 # ## Parameters
@@ -101,7 +112,7 @@ func set_target(target: ESCItem, needs_second_target: bool = false) -> void:
 	current_target = target
 	waiting_for_target2 = needs_second_target
 	if _room_is_ready:
-		update_tooltip_text()
+		set_content()
 
 
 # Set the second target of the label
@@ -111,11 +122,11 @@ func set_target(target: ESCItem, needs_second_target: bool = false) -> void:
 func set_target2(target2: ESCItem) -> void:
 	current_target2 = target2
 	if _room_is_ready:
-		update_tooltip_text()
+		set_content()
 
 
-# Update the tooltip text.
-func update_tooltip_text():
+# Update the tooltip's content.
+func set_content():
 	"""
 	Overriden method. Should not be called directly.
 	"""
@@ -128,7 +139,7 @@ func update_size():
 		# We're not in the tree anymore. Return
 		return
 
-	rect_size = get_font("normal_font").get_string_size(current_target.get_primary_action_text())
+	rect_size = get_font("normal_font").get_string_size(current_target.get_action_text(current_action))
 
 
 # Calculate the offset of the label depending on its position.
@@ -201,7 +212,7 @@ func clear():
 
 # Called when the room is loaded to setup the label.
 func _on_room_ready():
-	escoria.main.current_scene.game.tooltip_node = self
+	escoria.main.current_scene.game.register_tooltip(tooltip_id, self)
 	_room_is_ready = true
 
 
@@ -210,4 +221,4 @@ func _on_action_selected() -> void:
 	current_action = escoria.action_manager.current_action
 
 	if _room_is_ready:
-		update_tooltip_text()
+		set_content()
