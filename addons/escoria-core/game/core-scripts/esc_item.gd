@@ -193,6 +193,13 @@ var _scene_warnings: PoolStringArray = []
 # Optional outline for item.
 var _outline: ESCItemOutline
 
+# Indicates whether the item is currently focused (i.e. the cursor is overtop).
+var _is_focused: bool = false
+
+# Indicates whether outlines ("hints") are currently being shown by request of the player.
+var _show_outlines: bool = false
+
+
 # Add the movable node, connect signals, detect child nodes
 # and register this item
 func _ready():
@@ -358,7 +365,7 @@ func _toggle_highlight(value: bool) -> void:
 
 	if value and not _outline.visible:
 		_outline.show()
-	elif not value and _outline.visible:
+	elif not value and not (_show_outlines or _is_focused) and _outline.visible:
 		_outline.hide()
 
 
@@ -448,6 +455,15 @@ func _unhandled_input(input_event: InputEvent) -> void:
 			elif event.button_index == BUTTON_RIGHT:
 				emit_signal("mouse_right_clicked_item", self, event)
 				get_tree().set_input_as_handled()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(escoria.inputs_manager.ESC_UI_SHOW_HINTS):
+		_show_outlines = true
+		_toggle_highlight(_show_outlines)
+	elif event.is_action_released(escoria.inputs_manager.ESC_UI_SHOW_HINTS):
+		_show_outlines = false
+		_toggle_highlight(_show_outlines)
 
 
 # To display warnings in the scene tree should there be any.
@@ -586,12 +602,16 @@ func get_interact_position() -> Vector2:
 
 # React to the mouse entering the item by emitting the respective signal
 func mouse_entered():
+	_is_focused = true
+
 	if escoria.action_manager.is_object_actionable(global_id):
 		emit_signal("mouse_entered_item", self)
 
 
 # React to the mouse exiting the item by emitting the respective signal
 func mouse_exited():
+	_is_focused = false
+
 	emit_signal("mouse_exited_item",  self)
 
 

@@ -26,6 +26,9 @@ const ESC_SHOW_DEBUG_PROMPT = "esc_show_debug_prompt"
 # controller
 const ESC_UI_PRIMARY_ACTION = "esc_ui_primary_action"
 
+const ESC_UI_SHOW_HINTS = "esc_ui_show_hints"
+
+
 # The current input mode
 var input_mode = INPUT_ALL
 
