@@ -429,6 +429,9 @@ func update_tooltip_following_mouse_position(tooltip_container: Control, offset:
 	var mouse_pos: Vector2 = _current_mouse_pos
 	var tooltip: ESCTooltip = tooltip_container.get_node("tooltip")
 
+	var tooltip_width: Vector2 = \
+		tooltip.get_font("normal_font").get_string_size(tooltip.current_target.get_action_text(tooltip.current_action)) if is_instance_valid(tooltip.current_target) else Vector2.ZERO
+
 	# clamp TOP
 	if tooltip.tooltip_distance_to_edge_top(_current_mouse_pos) <= mouse_tooltip_margin:
 		mouse_pos.y = mouse_tooltip_margin
@@ -442,8 +445,8 @@ func update_tooltip_following_mouse_position(tooltip_container: Control, offset:
 		mouse_pos.x = mouse_tooltip_margin
 
 	# clamp RIGHT
-	if tooltip.tooltip_distance_to_edge_right(_current_mouse_pos + tooltip_container.rect_size / 2) <= mouse_tooltip_margin:
-		mouse_pos.x = escoria.game_size.x - mouse_tooltip_margin - tooltip_container.rect_size.x
+	if tooltip.tooltip_distance_to_edge_right(_current_mouse_pos + tooltip_container.rect_size + tooltip_width) <= mouse_tooltip_margin:
+		mouse_pos.x = escoria.game_size.x - mouse_tooltip_margin - tooltip_container.rect_size.x - tooltip_width.x
 
 	tooltip_container.rect_position = mouse_pos - offset
 

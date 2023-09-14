@@ -98,7 +98,7 @@ func _set_interactive(value: bool):
 	if "is_interactive" in self.node:
 		self.node.is_interactive = value
 		if not value:
-			escoria.game_scene.clear_tooltip()
+			escoria.game_scene.clear_tooltips()
 			escoria.inputs_manager.on_item_non_interactive(self.node)
 
 
