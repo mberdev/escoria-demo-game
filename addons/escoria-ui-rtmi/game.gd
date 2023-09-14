@@ -215,7 +215,7 @@ func left_click_on_bg(position: Vector2) -> void:
 
 
 func right_click_on_bg(position: Vector2) -> void:
-	mousewheel_action(1)
+	pass
 
 
 func left_double_click_on_bg(position: Vector2) -> void:
@@ -236,8 +236,10 @@ func element_focused(element_id: String) -> void:
 	tooltip_lmb.current_action = target_obj.get_verb_by_priority(0)
 	tooltip_lmb.set_target(target_obj)
 	
+	# only show the secondary action tooltip if there's actually a corresponding action in the item
 	tooltip_rmb.current_action = target_obj.get_verb_by_priority(1)
 	tooltip_rmb.set_target(target_obj)
+	tooltip_rmb_container.visible = not tooltip_rmb.current_action.empty()
 
 	if not tooltip_layer.visible:
 		_show_tooltips()
@@ -350,10 +352,6 @@ func close_inventory():
 	$CanvasLayer/ui/HBoxContainer/inventory_ui.hide_inventory()
 
 
-func mousewheel_action(direction: int):
-	$mouse_layer/verbs_menu.iterate_actions_cursor(direction)
-
-
 func hide_ui():
 	$CanvasLayer/ui.propagate_call("set_visible", [false], true)
 
@@ -452,8 +450,7 @@ func update_tooltip_following_mouse_position(tooltip_container: Control, offset:
 
 
 #func _on_action_finished():
-#	$mouse_layer/verbs_menu.clear_tool_texture()
-#	$mouse_layer/verbs_menu.iterate_actions_cursor(0)
+#	pass
 
 
 func _on_event_done(_return_code: int, _event_name: String):

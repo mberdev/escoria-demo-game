@@ -977,9 +977,9 @@ func get_inventory_action_text(action: String) -> String:
 #
 # *Returns*
 # The string from verb_priority at the index specified, or the default action if verb_priority is empty
-# or invalid, or an empty string should there be no default action specified.
+# or invalid and we're looking up the highest priority, or an empty string should there be no default action specified.
 func get_verb_by_priority(index: int) -> String:
 	if not verb_priority or index >= verb_priority.size():
-		return default_action if default_action else ""
+		return default_action if index == 0 and default_action else ""
 
 	return verb_priority[index]
