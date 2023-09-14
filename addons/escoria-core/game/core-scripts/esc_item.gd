@@ -156,8 +156,11 @@ export(bool) var draw_outline = false
 export(Dictionary) var action_texts = {}
 
 # Optional per-action text to be displayed when mousing over inventory item.
-export(String) var inventory_action_texts = {}
+export(Dictionary) var inventory_action_texts = {}
 
+# Optional list determining which 'verb' should be considered primary, secondary, etc.
+# List should be ordered from highest priority to lowest priority.
+export(Array) var verb_priority = []
 
 # ESCAnimationsResource (for walking, idling...)
 var animations: ESCAnimationResource setget set_animations
@@ -963,3 +966,20 @@ func get_action_text(action: String) -> String:
 # Returns the text to be used for the specified inventory action on this iitem.
 func get_inventory_action_text(action: String) -> String:
 	return inventory_action_texts[action] if action in inventory_action_texts.keys() else tooltip_name if tooltip_name else ""
+
+
+# Looks up and returns the verb based on the requested priority. Priority is the same as array index
+# in this case.
+#
+# #### Parameters
+#
+# - index: The index of the verb to look up and return. 0 = highest priority
+#
+# *Returns*
+# The string from verb_priority at the index specified, or the default action if verb_priority is empty
+# or invalid, or an empty string should there be no default action specified.
+func get_verb_by_priority(index: int) -> String:
+	if not verb_priority or index >= verb_priority.size():
+		return default_action if default_action else ""
+
+	return verb_priority[index]

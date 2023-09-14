@@ -233,10 +233,10 @@ func element_focused(element_id: String) -> void:
 	# target_obj should be an ESCItem
 	var target_obj = escoria.object_manager.get_object(element_id).node
 
-	tooltip_lmb.current_action = VERB_LOOK
+	tooltip_lmb.current_action = target_obj.get_verb_by_priority(0)
 	tooltip_lmb.set_target(target_obj)
 	
-	tooltip_rmb.current_action = VERB_USE
+	tooltip_rmb.current_action = target_obj.get_verb_by_priority(1)
 	tooltip_rmb.set_target(target_obj)
 
 	if not tooltip_layer.visible:
@@ -258,17 +258,23 @@ func element_unfocused() -> void:
 
 
 ## ITEMS ##
-func _handle_item_click(item_global_id: String, event: InputEvent, action: String) -> void:
+
+# Processes clicks on non-inventory items.
+#
+# #### Parameters
+#
+# - target_item: The clicked item.
+# - event: The input event corresponding to the actual click.
+# - action: Action to invoke on the item.
+func _handle_item_click(target_item: ESCItem, event: InputEvent, action: String) -> void:
 	if escoria.action_manager.action_state == ESCActionManager.ACTION_INPUT_STATE.AWAITING_TARGET_ITEM:
 		Input.set_custom_mouse_cursor(null)
-
-	var target_obj = escoria.object_manager.get_object(item_global_id).node
 
 	escoria.action_manager.set_current_action(action)
 
 	escoria.action_manager.do(
 		escoria.action_manager.ACTION.ITEM_LEFT_CLICK,
-		[item_global_id, event],
+		[target_item.global_id, event],
 		true
 	)
 
@@ -277,11 +283,15 @@ func _handle_item_click(item_global_id: String, event: InputEvent, action: Strin
 
 
 func left_click_on_item(item_global_id: String, event: InputEvent) -> void:
-	_handle_item_click(item_global_id, event, VERB_LOOK)
+	var target_obj = escoria.object_manager.get_object(item_global_id).node
+
+	_handle_item_click(target_obj, event, target_obj.get_verb_by_priority(0))
 
 
 func right_click_on_item(item_global_id: String, event: InputEvent) -> void:
-	_handle_item_click(item_global_id, event, VERB_USE)
+	var target_obj = escoria.object_manager.get_object(item_global_id).node
+
+	_handle_item_click(target_obj, event, target_obj.get_verb_by_priority(1))
 
 
 func left_double_click_on_item(item_global_id: String, event: InputEvent) -> void:

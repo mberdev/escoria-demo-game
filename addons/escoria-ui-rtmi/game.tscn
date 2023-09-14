@@ -85,6 +85,7 @@ visible = false
 
 [node name="tooltip_layer" type="CanvasLayer" parent="."]
 layer = 2
+visible = false
 
 [node name="tooltip_lmb_container" type="Control" parent="tooltip_layer"]
 margin_right = 40.0
