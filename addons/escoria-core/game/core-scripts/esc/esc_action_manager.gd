@@ -269,7 +269,7 @@ func _get_event_to_queue(
 
 	escoria.logger.info(
 		self,
-		"Checking if action '%s' on '%s' is valid..." % [action, target]
+		"Checking if action '%s' on '%s' is valid..." % [action, target.global_id]
 	)
 
 	var event_to_return = null
@@ -362,7 +362,7 @@ func _get_event_to_queue(
 					+ "but item must be in inventory."
 				)
 	else:
-		if target.events.has(action):
+		if _check_target_has_proper_action(target, action):
 			event_to_return = target.events[action]
 		elif escoria.action_default_script \
 			and escoria.action_default_script.events.has(action):
@@ -380,6 +380,27 @@ func _get_event_to_queue(
 			)
 
 	return event_to_return
+
+
+# Check to make sure `target` contains the specific `action`. If `target` has an entry for
+# `action` that also requires a target itself (e.g. :use "wrench"), then we return false as
+# combinations are handled elsewhere.
+#
+# #### Parameters
+#
+# - target: `ESCObject` whose events we are to check to see if `action` has a corresponding event
+# - action: the action to check
+#
+# *Returns*
+# True iff `target` has an event corresponding to `action` and that event doesn't itself require a target.
+func _check_target_has_proper_action(target: ESCObject, action: String) -> bool:
+	if target.events.has(action):
+		if target.events[action].get_target():
+			return false
+
+		return true
+
+	return false
 
 
 # Determines whether the specified events dictionary contains an event with the
