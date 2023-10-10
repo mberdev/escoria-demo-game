@@ -184,6 +184,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/escoria-core/game/core-scripts/esc/types/esc_dialog.gd"
 }, {
+"base": "ESCLocation",
+"class": "ESCDialogLocation",
+"language": "GDScript",
+"path": "res://addons/escoria-core/game/core-scripts/esc_dialog_location.gd"
+}, {
 "base": "Control",
 "class": "ESCDialogManager",
 "language": "GDScript",
@@ -248,6 +253,11 @@ _global_script_classes=[ {
 "class": "ESCInputsManager",
 "language": "GDScript",
 "path": "res://addons/escoria-core/game/esc_inputs_manager.gd"
+}, {
+"base": "ESCLocation",
+"class": "ESCInteractionLocation",
+"language": "GDScript",
+"path": "res://addons/escoria-core/game/core-scripts/esc_interaction_location.gd"
 }, {
 "base": "Control",
 "class": "ESCInventory",
@@ -685,6 +695,7 @@ _global_script_class_icons={
 "ESCCompiler": "",
 "ESCCondition": "",
 "ESCDialog": "",
+"ESCDialogLocation": "res://addons/escoria-core/design/esc_location.svg",
 "ESCDialogManager": "",
 "ESCDialogOption": "",
 "ESCDialogOptionsChooser": "",
@@ -698,6 +709,7 @@ _global_script_class_icons={
 "ESCGlobalsManager": "",
 "ESCGroup": "",
 "ESCInputsManager": "",
+"ESCInteractionLocation": "res://addons/escoria-core/design/esc_location.svg",
 "ESCInventory": "",
 "ESCInventoryButton": "",
 "ESCInventoryContainer": "",

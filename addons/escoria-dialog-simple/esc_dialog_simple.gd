@@ -2,26 +2,22 @@
 extends ESCDialogManager
 
 
-# State machine that governs how the dialog manager behaves
-var state_machine = preload("res://addons/escoria-dialog-simple/esc_dialog_simple_state_machine.gd").new()
+var speech_state_machine = preload("res://addons/escoria-dialog-simple/handlers/state_machines/esc_dialog_speech_state_machine.gd").new()
+
+var speech_manager: Node = preload("res://addons/escoria-dialog-simple/handlers/esc_dialog_render.gd").new()
+
+var current_manager: Node = null
 
 # The currently running player
 var _type_player: Node = null
-var _preserved_type_player_type: String = ""
 
 # Reference to the dialog player
 var _dialog_player: Node = null
 
-# Basic state tracking
-var _is_saying: bool = false
-
-# Whether to preserve the next dialog box used by `say`, or, if already
-# preserving a dialog box, whether to continue using that dialog box
-var _should_preserve_dialog_box: bool = false
-
 
 func _ready() -> void:
-	add_child(state_machine)
+	speech_manager.set_state_machine(speech_state_machine)
+	add_child(speech_manager)
 
 
 # Check whether a specific type is supported by the
@@ -51,7 +47,14 @@ func has_chooser_type(type: String) -> bool:
 # prior to `disable_preserve_dialog_box` being called, the result should be the
 # same.
 func enable_preserve_dialog_box() -> void:
-	_should_preserve_dialog_box = true
+	if is_instance_valid(speech_manager):
+		speech_manager.enable_preserve_dialog_box()
+		return
+
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)
 
 
 # Instructs the dialog manager to no longer preserve the currently-preserved
@@ -62,12 +65,14 @@ func enable_preserve_dialog_box() -> void:
 # prior to `enable_preserve_dialog_box` being called, the result should be the
 # same.
 func disable_preserve_dialog_box() -> void:
-	_should_preserve_dialog_box = false
+	if is_instance_valid(speech_manager):
+		speech_manager.disable_preserve_dialog_box()
+		return
 
-	if is_instance_valid(_dialog_player) and _dialog_player.get_children().has(_type_player):
-		_dialog_player.remove_child(_type_player)
-		_preserved_type_player_type = ""
-
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)
 
 # Output a text said by the item specified by the global id. Emit
 # `say_finished` after finishing displaying the text.
@@ -79,33 +84,12 @@ func disable_preserve_dialog_box() -> void:
 #   by a ":"
 # - type: Type of dialog box to use
 func say(dialog_player: Node, global_id: String, text: String, type: String):
-	_dialog_player = dialog_player
+	_init_speech_manager(global_id, text, type, dialog_player)
 
-	_initialize_say_states(global_id, text, type)
-
-	if _should_preserve_dialog_box:
-		# If the dialog box type doesn't match what's currently being reused (if anything),
-		# we want to remove the old one (if it exists) and then initialize and add the new dialog
-		# box type to the dialog player
-		if type != _preserved_type_player_type:
-			if _dialog_player.get_children().has(_type_player):
-				_dialog_player.remove_child(_type_player)
-
-			_init_type_player(type)
-
-		_preserved_type_player_type = type
-	else:
-		_init_type_player(type)
-
-	state_machine._change_state("say")
-
-#	yield(_type_player, "say_finished")
-#	if _dialog_player.get_children().has(_type_player):
-#		_dialog_player.remove_child(_type_player)
-#		emit_signal("say_finished")
+	speech_manager.say(dialog_player, global_id, text, type)
 
 
-func do_say(global_id: String, text: String) -> void:
+func do_narrator_say(global_id: String, text: String) -> void:
 	# Only add_child here in order to prevent _type_player from running its _process method
 	# before we're ready, and only if it's necessary
 	if not _dialog_player.get_children().has(_type_player):
@@ -114,40 +98,28 @@ func do_say(global_id: String, text: String) -> void:
 	_type_player.say(global_id, text)
 
 
-func _init_type_player(type: String) -> void:
-	if type == "floating":
-		_type_player = preload(\
-			"res://addons/escoria-dialog-simple/types/floating.tscn"\
-		).instance()
-	else:
-		_type_player = preload(\
-			"res://addons/escoria-dialog-simple/types/avatar.tscn"\
-		).instance()
+func _init_speech_manager(global_id: String, text: String, type: String, dialog_player: Node) -> void:
+	speech_state_machine.initialize_states(speech_manager, global_id, text, type, dialog_player)
 
-	_type_player.connect("say_finished", self, "_on_say_finished")
-	_type_player.connect("say_visible", self, "_on_say_visible")
+	if not speech_manager.is_connected("say_finished", self, "_on_say_finished"):
+		speech_manager.connect("say_finished", self, "_on_say_finished")
 
+	if not speech_manager.is_connected("say_visible", self, "_on_say_visible"):
+		speech_manager.connect("say_visible", self, "_on_say_visible")
 
-func _initialize_say_states(global_id: String, text: String, type: String) -> void:
-	state_machine.states_map["say"].initialize(self, global_id, text, type)
-	state_machine.states_map["finish"].initialize(_dialog_player)
-	state_machine.states_map["say_fast"].initialize(self)
-	state_machine.states_map["say_finish"].initialize(self)
-	state_machine.states_map["visible"].initialize(self)
-	state_machine.states_map["interrupt"].initialize(self)
+	current_manager = speech_manager
 
 
 func _on_say_finished():
-	if not _should_preserve_dialog_box and _dialog_player.get_children().has(_type_player):
-		_dialog_player.remove_child(_type_player)
-
-	_is_saying = false
-
 	emit_signal("say_finished")
 
 
 func _on_say_visible():
 	emit_signal("say_visible")
+
+
+func _on_narrator_say_visible():
+	emit_signal("narrator_say_visible")
 
 
 # Present an option chooser to the player and sends the signal
@@ -160,8 +132,8 @@ func _on_say_visible():
 func choose(dialog_player: Node, dialog: ESCDialog, type: String):
 	_dialog_player = dialog_player
 
-	state_machine.states_map["choices"].initialize(dialog_player, self, dialog, type)
-	state_machine._change_state("choices")
+#	state_machine.states_map["choices"].initialize(dialog_player, self, dialog, type)
+#	state_machine._change_state("choices")
 
 
 func do_choose(dialog_player: Node, dialog: ESCDialog, type: String = "simple"):
@@ -183,31 +155,46 @@ func do_choose(dialog_player: Node, dialog: ESCDialog, type: String = "simple"):
 
 # Trigger running the dialogue faster
 func speedup():
-	if is_instance_valid(_type_player):
-		_type_player.speedup()
+	if is_instance_valid(speech_manager):
+		speech_manager.speedup()
+		return
 
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)
 
 # Trigger an instant finish of the current dialog
 func finish():
-	if is_instance_valid(_type_player):
-		_type_player.finish()
+	if is_instance_valid(speech_manager):
+		speech_manager.finish()
+		return
+
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)
 
 
 # The say command has been interrupted, cancel the dialog display
 func interrupt():
-	if _dialog_player.get_children().has(_type_player):
-		(
-			escoria.object_manager.get_object(escoria.object_manager.SPEECH).node\
-			 as ESCSpeechPlayer
-		).set_state("off")
+	if is_instance_valid(speech_manager):
+		speech_manager.interrupt()
+		return
 
-		if not _should_preserve_dialog_box and _dialog_player.get_children().has(_type_player):
-			_dialog_player.remove_child(_type_player)
-
-		emit_signal("say_finished")
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)
 
 
 # To be called if voice audio has finished.
 func voice_audio_finished():
-	if is_instance_valid(_type_player):
-		_type_player.voice_audio_finished()
+	if is_instance_valid(speech_manager):
+		speech_manager.voice_audio_finished()
+		return
+
+	escoria.logger.warn(
+		self,
+		"No valid speech manager!"
+	)

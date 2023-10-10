@@ -9,6 +9,12 @@ signal say_finished
 # Emitted when text has just become fully visible
 signal say_visible
 
+# Emitted when the narrator function has completed showing the text
+signal narrator_say_finished
+
+# Emitted when narrator text has just become fully visible
+signal narrator_say_visible
+
 # Emitted when the player has chosen an option
 signal option_chosen(option)
 
@@ -33,7 +39,7 @@ func has_chooser_type(type: String) -> bool:
 	return false
 
 
-# Output a text said by the item specified by the global id. Emit
+# Output text said by the item specified by the global id. Emit
 # `say_finished` after finishing displaying the text.
 #
 # #### Parameters
@@ -43,6 +49,19 @@ func has_chooser_type(type: String) -> bool:
 #   by a ":"
 # - type: Type of dialog box to use
 func say(dialog_player: Node, global_id: String, text: String, type: String):
+	pass
+
+
+# Output text said by an offscreen "narrator". Emit
+# `say_finished` after finishing displaying the text.
+#
+# #### Parameters
+# - dialog_player: Node of the dialog player in the UI
+# - global_id: Global id of the item that is speaking
+# - text: Text to say, optional prefixed by a translation key separated
+#   by a ":"
+# - type: Type of dialog box to use
+func narrator(dialog_player: Node, global_id: String, text: String, type: String):
 	pass
 
 
