@@ -135,6 +135,24 @@ func update(_delta):
 		_ready_to_say = false
 
 
+func exit() -> void:
+	if (
+		escoria.object_manager.get_object(escoria.object_manager.SPEECH).node\
+		 as ESCSpeechPlayer
+	).stream.is_connected("finished", self, "_on_audio_finished"):
+
+		(
+			escoria.object_manager.get_object(escoria.object_manager.SPEECH).node\
+			 as ESCSpeechPlayer
+		).stream.disconnect("finished", self, "_on_audio_finished")
+
+	if _dialog_manager.is_connected("say_visible", self, "_on_say_visible"):
+		_dialog_manager.disconnect("say_visible", self, "_on_say_visible")
+
+	if _dialog_manager.is_connected("say_visible", self, "_on_say_visible"):
+		_dialog_manager.disconnect("say_visible", self, "_on_say_visible")
+
+
 # Find the matching voice output file for the given key
 #
 # #### Parameters

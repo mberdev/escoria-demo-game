@@ -39,6 +39,16 @@ func has_chooser_type(type: String) -> bool:
 	return false
 
 
+# Check whether a specific narrator type is supported by the
+# dialog plugin
+#
+# #### Parameters
+# - type: required type
+# *Returns* Whether the narrator type is supported or not
+func has_narrator_type(type: String) -> bool:
+	return false
+
+
 # Output text said by the item specified by the global id. Emit
 # `say_finished` after finishing displaying the text.
 #

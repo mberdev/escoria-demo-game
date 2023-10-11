@@ -3,8 +3,10 @@ extends ESCDialogManager
 
 
 var speech_state_machine = preload("res://addons/escoria-dialog-simple/handlers/state_machines/esc_dialog_speech_state_machine.gd").new()
+var choice_state_machine = preload("res://addons/escoria-dialog-simple/handlers/state_machines/esc_dialog_choice_state_machine.gd").new()
 
 var speech_manager: Node = preload("res://addons/escoria-dialog-simple/handlers/esc_dialog_render.gd").new()
+var choice_manager: Node = preload("res://addons/escoria-dialog-simple/handlers/esc_dialog_choose.gd").new()
 
 var current_manager: Node = null
 
@@ -17,7 +19,7 @@ var _dialog_player: Node = null
 
 func _ready() -> void:
 	speech_manager.set_state_machine(speech_state_machine)
-	add_child(speech_manager)
+	choice_manager.set_state_machine(choice_state_machine)
 
 
 # Check whether a specific type is supported by the
@@ -38,6 +40,16 @@ func has_type(type: String) -> bool:
 # *Returns* Whether the type is supported or not
 func has_chooser_type(type: String) -> bool:
 	return true if type == "simple" else false
+
+
+# Check whether a specific narrator type is supported by the
+# dialog plugin
+#
+# #### Parameters
+# - type: required type
+# *Returns* Whether the narrator type is supported or not
+func has_narrator_type(type: String) -> bool:
+	return true if type in ["floating", "avatar"] else false
 
 
 # Instructs the dialog manager to preserve the next dialog box used by a `say`
@@ -98,23 +110,38 @@ func do_narrator_say(global_id: String, text: String) -> void:
 	_type_player.say(global_id, text)
 
 
+# Initializer the dialog speech manager.
+#
+# #### Parameters
+# - dialog_player: Node of the dialog player in the UI
+# - dialog: Information about the dialog to display
+# - type: The dialog chooser type to use
 func _init_speech_manager(global_id: String, text: String, type: String, dialog_player: Node) -> void:
 	speech_state_machine.initialize_states(speech_manager, global_id, text, type, dialog_player)
 
-	if not speech_manager.is_connected("say_finished", self, "_on_say_finished"):
-		speech_manager.connect("say_finished", self, "_on_say_finished")
+	if not speech_manager.is_connected("say_finished", self, "_on_internal_say_finished"):
+		speech_manager.connect("say_finished", self, "_on_internal_say_finished")
 
-	if not speech_manager.is_connected("say_visible", self, "_on_say_visible"):
-		speech_manager.connect("say_visible", self, "_on_say_visible")
+	if not speech_manager.is_connected("say_visible", self, "_on_internal_say_visible"):
+		speech_manager.connect("say_visible", self, "_on_internal_say_visible")
+
+	_attach_manager(current_manager, speech_manager)
 
 	current_manager = speech_manager
 
 
-func _on_say_finished():
+func _attach_manager(old_manager, new_manager) -> void:
+	if is_instance_valid(old_manager):
+		remove_child(old_manager)
+
+	add_child(new_manager)
+
+
+func _on_internal_say_finished():
 	emit_signal("say_finished")
 
 
-func _on_say_visible():
+func _on_internal_say_visible():
 	emit_signal("say_visible")
 
 
@@ -130,27 +157,23 @@ func _on_narrator_say_visible():
 # - dialog: Information about the dialog to display
 # - type: The dialog chooser type to use
 func choose(dialog_player: Node, dialog: ESCDialog, type: String):
-	_dialog_player = dialog_player
+	_init_choice_manager(dialog_player, dialog, type)
 
-#	state_machine.states_map["choices"].initialize(dialog_player, self, dialog, type)
-#	state_machine._change_state("choices")
+	choice_manager.choose(dialog_player, dialog, type)
 
 
-func do_choose(dialog_player: Node, dialog: ESCDialog, type: String = "simple"):
-	var chooser
+# Initializer the dialog choice manager.
+#
+# #### Parameters
+# - dialog_player: Node of the dialog player in the UI
+# - dialog: Information about the dialog to display
+# - type: The dialog chooser type to use
+func _init_choice_manager(dialog_player: Node, dialog: ESCDialog, type: String) -> void:
+	choice_state_machine.initialize_states(choice_manager, dialog, type, dialog_player)
 
-	if type == "simple" or type == "":
-		chooser = preload(\
-			"res://addons/escoria-dialog-simple/chooser/simple.tscn"\
-		).instance()
+	_attach_manager(current_manager, choice_manager)
 
-	dialog_player.add_child(chooser)
-	chooser.set_dialog(dialog)
-	chooser.show_chooser()
-
-	var option = yield(chooser, "option_chosen")
-	dialog_player.remove_child(chooser)
-	emit_signal("option_chosen", option)
+	current_manager = choice_manager
 
 
 # Trigger running the dialogue faster

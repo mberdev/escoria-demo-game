@@ -16,7 +16,15 @@ func enter():
 		if not _dialog_manager.is_connected("say_finished", self, "_on_say_finished"):
 			_dialog_manager.connect("say_finished", self, "_on_say_finished")
 
+
+func update(_delta) -> void:
+	if _dialog_manager != null:
 		_dialog_manager.interrupt()
+
+
+func exit() -> void:
+	if _dialog_manager.is_connected("say_finished", self, "_on_say_finished"):
+		_dialog_manager.disconnect("say_finished", self, "_on_say_finished")
 
 
 func _on_say_finished() -> void:
