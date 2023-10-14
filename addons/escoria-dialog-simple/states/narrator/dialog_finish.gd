@@ -18,9 +18,14 @@ func enter():
 
 func update(_delta):
 	escoria.logger.trace(self, "Dialog State Machine: 'finish' -> 'idle'")
+
+	# We need to trigger the transition to make sure we get to 'idle' before 
+	# firing any signals since they will effectively halt execution of the state machine in its
+	# tracks.
+	emit_signal("finished", "idle")
+
 	_dialog_manager.interrupt()
 	_dialog_player.emit_signal("say_finished")
-	emit_signal("finished", "idle")
 
 
 func exit():
