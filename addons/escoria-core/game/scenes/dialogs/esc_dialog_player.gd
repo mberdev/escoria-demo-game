@@ -17,6 +17,8 @@ signal say_finished
 # Used when specifying dialog types in various methods
 const DIALOG_TYPE_SAY = "say"
 
+const DIALOG_TYPE_NARRATOR_SAY = "narrator_say"
+
 const DIALOG_TYPE_CHOOSE = "choose"
 
 
@@ -83,6 +85,28 @@ func say(character: String, type: String, text: String) -> void:
 	_say_dialog_manager.say(self, character, text, type)
 
 
+# Make an offscreen "narrator" say some text
+#
+# #### Parameters
+#
+# - type: UI to use for the dialog
+# - text: Text to say
+func narrator_say(type: String, text: String) -> void:
+	if type == "":
+		type = ESCProjectSettingsManager.get_setting(
+			ESCProjectSettingsManager.DEFAULT_DIALOG_TYPE
+		)
+
+	# We only need to remove the dialog manager from the scene tree if the dialog manager type
+	# has changed since the last use of this method.
+	_update_dialog_manager(DIALOG_TYPE_NARRATOR_SAY, _say_dialog_manager, type)
+
+	if _block_say_enabled:
+		_say_dialog_manager.enable_preserve_dialog_box()
+
+	_say_dialog_manager.narrator_say(self, text, type)
+
+
 # Display a list of choices
 #
 # #### Parameters
@@ -107,8 +131,9 @@ func interrupt() -> void:
 # the engine throws an error and stops.
 #
 # #### Parameters
-# - type: The type the dialog manager should support, e.g. "floating"
-func _determine_say_dialog_manager(type: String) -> void:
+# - say_type: Whether it's the narrator speaking or an onscreen character.
+# - manager_type: The type the dialog manager should support, e.g. "floating"
+func _determine_say_dialog_manager(say_type: String, manager_type: String) -> void:
 	var dialog_manager: ESCDialogManager = null
 
 	for _manager_class in ESCProjectSettingsManager.get_setting(
@@ -116,15 +141,22 @@ func _determine_say_dialog_manager(type: String) -> void:
 	):
 		if ResourceLoader.exists(_manager_class):
 			var _manager: ESCDialogManager = load(_manager_class).new()
-			if _manager.has_type(type):
-				dialog_manager = _manager
-			else:
-				dialog_manager = null
+
+			if say_type == DIALOG_TYPE_SAY:
+				if _manager.has_type(manager_type):
+					dialog_manager = _manager
+				else:
+					dialog_manager = null
+			elif say_type == DIALOG_TYPE_NARRATOR_SAY:
+				if _manager.has_narrator_type(manager_type):
+					dialog_manager = _manager
+				else:
+					dialog_manager = null
 
 	if not is_instance_valid(dialog_manager):
 		escoria.logger.error(
 			self,
-			"No dialog manager called '%s' configured." % type
+			"No dialog manager called '%s' configured for '%s'." % [manager_type, say_type]
 		)
 
 	_say_dialog_manager = dialog_manager
@@ -187,8 +219,8 @@ func _update_dialog_manager(dialog_type: String, current_dialog_manager: ESCDial
 #
 # *Returns* the newly-resolved dialog manager
 func _determine_dialog_manager(dialog_type: String, dialog_manager_type: String) -> ESCDialogManager:
-	if dialog_type == DIALOG_TYPE_SAY:
-		_determine_say_dialog_manager(dialog_manager_type)
+	if dialog_type in [DIALOG_TYPE_SAY, DIALOG_TYPE_NARRATOR_SAY]:
+		_determine_say_dialog_manager(dialog_type, dialog_manager_type)
 		return _say_dialog_manager
 	elif dialog_type == DIALOG_TYPE_CHOOSE:
 		_determine_choose_dialog_manager(dialog_manager_type)
@@ -196,3 +228,4 @@ func _determine_dialog_manager(dialog_type: String, dialog_manager_type: String)
 
 	# This line will never be hit as a failure above will result in an Escoria error
 	return null
+

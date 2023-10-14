@@ -8,9 +8,6 @@ const KEYTEXT_REGEX = "^((?<key>[^:]+):)?\"(?<text>.+)\""
 # Reference to the currently playing dialog manager
 var _dialog_manager: ESCDialogManager = null
 
-# UI to use for the dialog
-var _type: String
-
 # Text to say
 var _text: String
 
@@ -19,41 +16,22 @@ var _keytext_regex: RegEx = RegEx.new()
 
 var _ready_to_say: bool
 
+
 # Constructor
 func _init() -> void:
 	_keytext_regex.compile(KEYTEXT_REGEX)
 
 
-func initialize(dialog_manager: ESCDialogManager, text: String, type: String) -> void:
+func initialize(dialog_manager: ESCDialogManager, text: String) -> void:
 	_dialog_manager = dialog_manager
 	_text = text
-	_type = type
-
-
-func handle_input(_event):
-	if _event is InputEventMouseButton and _event.pressed:
-		if escoria.inputs_manager.input_mode != \
-			escoria.inputs_manager.INPUT_NONE and \
-			_dialog_manager != null:
-
-			_handle_left_click_action()
-
-
-func _handle_left_click_action() -> void:
-	if _dialog_manager.is_connected("say_visible", self, "_on_say_visible"):
-		_dialog_manager.disconnect("say_visible", self, "_on_say_visible")
-
-	escoria.logger.trace(self, "Dialog State Machine: 'narrator_say' -> 'narrator_say_finish'")
-	emit_signal("finished", "narrator_say_finish")
-
-	get_tree().set_input_as_handled()
 
 
 func enter():
-	escoria.logger.trace(self, "Dialog State Machine: Entered 'narrator_say'.")
+	escoria.logger.trace(self, "Dialog State Machine: Entered 'say'.")
 
-	if not _dialog_manager.is_connected("narrator_say_visible", self, "_on_narrator_say_visible"):
-		_dialog_manager.connect("narrator_say_visible", self, "_on_narrator_say_visible")
+#	if not _dialog_manager.is_connected("say_visible", self, "_on_say_visible"):
+#		_dialog_manager.connect("say_visible", self, "_on_say_visible")
 
 	var matches = _keytext_regex.search(_text)
 
@@ -102,6 +80,7 @@ func enter():
 func update(_delta):
 	if _ready_to_say:
 		_dialog_manager.do_narrator_say(_text)
+		emit_signal("finished", "say_finish")
 		_ready_to_say = false
 
 
@@ -142,6 +121,6 @@ func _get_voice_file(key: String, start: String = "") -> String:
 	return ""
 
 
-func _on_narrator_say_visible() -> void:
-	escoria.logger.trace(self, "Dialog State Machine: 'narrator_say' -> 'narrator_visible'")
-	emit_signal("finished", "narrator_visible")
+#func _on_say_visible() -> void:
+#	escoria.logger.trace(self, "Dialog State Machine: 'say' -> 'visible'")
+#	emit_signal("finished", "visible")

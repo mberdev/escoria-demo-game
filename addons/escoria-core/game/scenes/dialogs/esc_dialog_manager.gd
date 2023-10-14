@@ -67,11 +67,10 @@ func say(dialog_player: Node, global_id: String, text: String, type: String):
 #
 # #### Parameters
 # - dialog_player: Node of the dialog player in the UI
-# - global_id: Global id of the item that is speaking
 # - text: Text to say, optional prefixed by a translation key separated
 #   by a ":"
 # - type: Type of dialog box to use
-func narrator(dialog_player: Node, global_id: String, text: String, type: String):
+func narrator_say(dialog_player: Node, text: String, type: String):
 	pass
 
 

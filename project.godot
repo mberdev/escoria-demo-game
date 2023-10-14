@@ -480,6 +480,11 @@ _global_script_classes=[ {
 "path": "res://addons/escoria-core/game/core-scripts/esc/commands/inventory_remove.gd"
 }, {
 "base": "ESCBaseCommand",
+"class": "NarratorSayCommand",
+"language": "GDScript",
+"path": "res://addons/escoria-core/game/core-scripts/esc/commands/narrator_say.gd"
+}, {
+"base": "ESCBaseCommand",
 "class": "PlaySndCommand",
 "language": "GDScript",
 "path": "res://addons/escoria-core/game/core-scripts/esc/commands/play_snd.gd"
@@ -754,6 +759,7 @@ _global_script_class_icons={
 "IncGlobalCommand": "",
 "InventoryAddCommand": "",
 "InventoryRemoveCommand": "",
+"NarratorSayCommand": "",
 "PlaySndCommand": "",
 "PrintCommand": "",
 "QueueEventCommand": "",
@@ -867,6 +873,8 @@ ui/default_dialog_scene="res://addons/escoria-core/ui_library/dialogs/floating_d
 main/action_default_script="res://action_defaults.esc"
 dialog_simple/text_speed_per_character=0.1
 dialog_simple/fast_text_speed_per_character=0.25
+debug/enable_hover_stack_viewer=true
+main/escoria_version="4.0-alpha"
 ui/default_dialog_type="floating"
 dialog_simple/avatars_path="res://game/dialog_avatars"
 dialog_simple/text_time_per_letter_ms=100
@@ -875,8 +883,6 @@ dialog_simple/clear_text_by_click_only=false
 dialog_simple/reading_speed_in_wpm=200
 dialog_simple/left_click_action="Speed up"
 dialog_simple/stop_talking_animation_on="End of audio"
-debug/enable_hover_stack_viewer=true
-main/escoria_version="4.0-alpha"
 
 [input]
 

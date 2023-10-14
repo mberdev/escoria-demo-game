@@ -18,8 +18,8 @@ func _init() -> void:
 #   by a ":"
 # - type: Type of dialog box to use
 # - dialog_player: Node of the dialog player in the UI
-func initialize_states(dialog_manager: ESCDialogManager, global_id: String, text: String, type: String, dialog_player: Node) -> void:
-	states_map["say"].initialize(dialog_manager, global_id, text, type)
+func initialize_states(dialog_manager: ESCDialogManager, global_id: String, text: String, dialog_player: Node) -> void:
+	states_map["say"].initialize(dialog_manager, global_id, text)
 	states_map["say_fast"].initialize(dialog_manager)
 	states_map["say_finish"].initialize(dialog_manager)
 	states_map["visible"].initialize(dialog_manager)

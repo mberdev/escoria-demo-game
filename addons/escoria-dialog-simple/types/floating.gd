@@ -10,18 +10,20 @@ signal say_visible
 
 
 # The text speed per character for normal display
-var _text_time_per_character: float
+var _text_time_per_character: float setget set_text_time_per_character
 
 # The text speed per character if the dialog line is skipped
-var _fast_text_time_per_character: float
+var _fast_text_time_per_character: float setget set_fast_text_time_per_character
 
 # The reading speed to be used in determining the length of time text remains
 # on the screen.
-var _reading_speed_in_wpm: int
+var _reading_speed_in_wpm: int setget set_reading_speed_in_wpm
+
+# Determines whether the text can only be cleared with a click.
+var _clear_text_by_click_only: bool setget set_clear_text_by_click_only
 
 # Used to extract words from lines of text.
 var _word_regex: RegEx = RegEx.new()
-
 
 # Current character speaking, to keep track of reference for animation purposes
 var _current_character
@@ -44,8 +46,29 @@ onready var is_paused: bool = true
 
 var dialog_location_node = null
 
+
+func set_text_time_per_character(value: float) -> void:
+	_text_time_per_character = value
+
+
+func set_fast_text_time_per_character(value: float) -> void:
+	_fast_text_time_per_character = value
+
+
+func set_reading_speed_in_wpm(value: int) -> void:
+	_reading_speed_in_wpm = value
+
+
+func set_clear_text_by_click_only(value: bool) -> void:
+	_clear_text_by_click_only = value
+
+
 # Enable bbcode and catch the signal when a tween completed
 func _ready():
+	_clear_text_by_click_only = ESCProjectSettingsManager.get_setting(
+		SimpleDialogSettings.CLEAR_TEXT_BY_CLICK_ONLY
+	)
+
 	_text_time_per_character = ProjectSettings.get_setting(
 		SimpleDialogSettings.TEXT_TIME_PER_LETTER_MS
 	)
@@ -233,7 +256,7 @@ func _get_number_of_words() -> int:
 # Ending the dialog
 func _on_dialog_finished():
 	# Only trigger to clear the text if we aren't limiting the clearing trigger to a click.
-	if not ESCProjectSettingsManager.get_setting(SimpleDialogSettings.CLEAR_TEXT_BY_CLICK_ONLY):
+	if not _clear_text_by_click_only:
 		emit_signal("say_finished")
 
 

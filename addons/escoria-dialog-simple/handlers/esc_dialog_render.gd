@@ -22,7 +22,6 @@ var _should_preserve_dialog_box: bool = false
 func set_state_machine(state_machine) -> void:
 	if is_instance_valid(_state_machine):
 		remove_child(_state_machine)
-		_state_machine.queue_free() # keep an eye on this
 
 	_state_machine = state_machine
 
@@ -37,6 +36,16 @@ func set_state_machine(state_machine) -> void:
 # *Returns* Whether the type is supported or not
 func has_type(type: String) -> bool:
 	return true if type in ["floating", "avatar"] else false
+
+
+# Check whether a specific narrator type is supported by the
+# dialog plugin
+#
+# #### Parameters
+# - type: required type
+# *Returns* Whether the narrator type is supported or not
+func has_narrator_type(type: String) -> bool:
+	return true if type in ["avatar"] else false
 
 
 # Instructs the dialog manager to preserve the next dialog box used by a `say`
@@ -76,6 +85,47 @@ func disable_preserve_dialog_box() -> void:
 func say(dialog_player: Node, global_id: String, text: String, type: String):
 	_dialog_player = dialog_player
 
+	_resolve_type_player(type)
+
+	_state_machine._change_state("say")
+
+
+func do_say(global_id: String, text: String) -> void:
+	# Only add_child here in order to prevent _type_player from running its _process method
+	# before we're ready, and only if it's necessary
+	if not _dialog_player.get_children().has(_type_player):
+		_dialog_player.add_child(_type_player)
+
+	_type_player.say(global_id, text)
+
+
+# Output text said by an offscreen "narrator". Emit
+# `say_finished` after finishing displaying the text.
+#
+# #### Parameters
+# - dialog_player: Node of the dialog player in the UI
+# - text: Text to say, optional prefixed by a translation key separated
+#   by a ":"
+# - type: Type of dialog box to use
+func narrator_say(dialog_player: Node, text: String, type: String):
+	_dialog_player = dialog_player
+
+	_resolve_type_player(type)
+
+	_state_machine._change_state("say")
+
+
+func do_narrator_say(text: String) -> void:
+	# Only add_child here in order to prevent _type_player from running its _process method
+	# before we're ready, and only if it's necessary
+	if not _dialog_player.get_children().has(_type_player):
+		_dialog_player.add_child(_type_player)
+		_type_player.set_clear_text_by_click_only(true)
+
+	_type_player.say("", text)
+
+
+func _resolve_type_player(type: String) -> void:
 	if _should_preserve_dialog_box:
 		# If the dialog box type doesn't match what's currently being reused (if anything),
 		# we want to remove the old one (if it exists) and then initialize and add the new dialog
@@ -89,17 +139,6 @@ func say(dialog_player: Node, global_id: String, text: String, type: String):
 		_preserved_type_player_type = type
 	else:
 		_init_type_player(type)
-
-	_state_machine._change_state("say")
-
-
-func do_say(global_id: String, text: String) -> void:
-	# Only add_child here in order to prevent _type_player from running its _process method
-	# before we're ready, and only if it's necessary
-	if not _dialog_player.get_children().has(_type_player):
-		_dialog_player.add_child(_type_player)
-
-	_type_player.say(global_id, text)
 
 
 func _init_type_player(type: String) -> void:

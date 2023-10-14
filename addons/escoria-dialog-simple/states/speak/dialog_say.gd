@@ -11,9 +11,6 @@ var _dialog_manager: ESCDialogManager = null
 # Character that is talking
 var _character: String
 
-# UI to use for the dialog
-var _type: String
-
 # Text to say
 var _text: String
 
@@ -30,11 +27,10 @@ func _init() -> void:
 	_keytext_regex.compile(KEYTEXT_REGEX)
 
 
-func initialize(dialog_manager: ESCDialogManager, character: String, text: String, type: String) -> void:
+func initialize(dialog_manager: ESCDialogManager, character: String, text: String) -> void:
 	_dialog_manager = dialog_manager
 	_character = character
 	_text = text
-	_type = type
 	_stop_talking_animation_on_option = \
 		ESCProjectSettingsManager.get_setting(SimpleDialogSettings.STOP_TALKING_ANIMATION_ON)
 
